@@ -36,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService(new Intent(this, WindowChangeDetectingService.class));
+        //startService(new Intent(this, WindowChangeDetectingService.class));
 
         if (!isServiceRunning(MyService.class,this)) {
-            startService(new Intent(this, MyService.class));
+            //startService(new Intent(this, MyService.class));
         }
         /*new Timer().scheduleAtFixedRate(new TimerTask() {
             int iters = 0;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> forbiddenApps = new ArrayList<String>();
                 forbiddenApps.add("com.android.chrome");
                 forbiddenApps.add("com.google.android.apps.messaging");
-                Intent startIntent = new Intent(MainActivity.this, MyService.class);
+                Intent startIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
                 startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");
                 startService(startIntent);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent stopIntent = new Intent(MainActivity.this, MyService.class);
+                Intent stopIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
                 stopIntent.setAction("STOP");
                 startService(stopIntent);
             }

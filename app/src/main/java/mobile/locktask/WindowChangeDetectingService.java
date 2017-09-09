@@ -18,19 +18,32 @@ import android.util.Log;
 
 public class WindowChangeDetectingService extends AccessibilityService {
 
+    private boolean blockingOn = false;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("making fg...","make");
-        final Intent emptyIntent = new Intent();
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.foreground_running)
-                        .setContentTitle("LockTask is blocking your apps")
-                        .setContentText("Work out to unlock")
-                        .setContentIntent(pendingIntent);
-        startForeground(1, mBuilder.build());
+        if(intent.getAction() != null && intent.getAction().equals("STOP")) {
+            blockingOn = false;
+        }
+
+        else if (!blockingOn) {
+
+            blockingOn = true;
+
+            Log.d("making fg...", "make");
+            final Intent emptyIntent = new Intent();
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.foreground_running)
+                            .setContentTitle("LockTask is blocking your apps")
+                            .setContentText("Work out to unlock")
+                            .setContentIntent(pendingIntent);
+            startForeground(1, mBuilder.build());
+        }
+
         return super.onStartCommand(intent, flags, startId);
 
     }
@@ -38,19 +51,21 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
         @Override
         public void onAccessibilityEvent(AccessibilityEvent event) {
-            Log.d("Access event","access event");
-            if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-                if (event.getPackageName() != null && event.getClassName() != null) {
-                    ComponentName componentName = new ComponentName(
-                            event.getPackageName().toString(),
-                            event.getClassName().toString()
-                    );
-                    Log.i("CurrentActivity", event.getPackageName().toString());
-                    if ("com.android.chrome".equals(event.getPackageName().toString())) {
-                        showHomeScreen();
+            if (blockingOn) {
+                Log.d("Access event", "access event");
+                if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+                    if (event.getPackageName() != null && event.getClassName() != null) {
+                        ComponentName componentName = new ComponentName(
+                                event.getPackageName().toString(),
+                                event.getClassName().toString()
+                        );
+                        Log.i("CurrentActivity", event.getPackageName().toString());
+                        if ("com.android.chrome".equals(event.getPackageName().toString())) {
+                            showHomeScreen();
+                        }
+
+
                     }
-
-
                 }
             }
         }

@@ -29,8 +29,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        new Timer().scheduleAtFixedRate(new TimerTask() {
+        if (!isServiceRunning(MyService.class,this)) {
+            startService(new Intent(this, MyService.class));
+        }
+        /*new Timer().scheduleAtFixedRate(new TimerTask() {
             int iters = 0;
             @Override
             public void run() {
@@ -38,9 +40,21 @@ public class MainActivity extends AppCompatActivity {
                 iters += 1;
                 //Log.d("iters",Integer.toString(iters));
             }
-        }, 0, 1000);
+        }, 0, 1000);*/
+
 
     }
+
+    public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
 

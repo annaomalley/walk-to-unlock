@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TreeMap;
 import java.util.TimerTask;
+import android.support.v4.app.NotificationCompat;
+import android.app.PendingIntent;
 import android.widget.Toast;
 import android.app.ActivityManager.RunningTaskInfo;
 
@@ -31,6 +33,16 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("working?","yes");
+        final Intent emptyIntent = new Intent();
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.foreground_running)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!")
+                        .setContentIntent(pendingIntent);
+        startForeground(1,mBuilder.build());
         new Timer().scheduleAtFixedRate(new TimerTask() {
             int iters = 0;
             @Override

@@ -24,6 +24,8 @@ import android.app.ActivityManager.RunningTaskInfo;
 
 public class MyService extends Service {
 
+    Timer timer = new Timer();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -32,31 +34,69 @@ public class MyService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("working?","yes");
-        final Intent emptyIntent = new Intent();
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if(intent.getAction() != null && intent.getAction().equals("STOP")) {
+            Log.d("stop received","stop received");
+            stopForeground(true);
+            stopSelf();
+        }
+        else if(intent.getAction() != null && intent.getAction().equals("START")) {
+            Log.d("working?", "yes");
+            final Intent emptyIntent = new Intent();
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.foreground_running)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!")
-                        .setContentIntent(pendingIntent);
-        startForeground(1,mBuilder.build());
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            int iters = 0;
-            @Override
-            public void run() {
-                iters += 1;
-                Log.d("iters",Integer.toString(iters));
-                String currentApp = getForegroundApp();
-                if("com.android.chrome".equals(currentApp)){
-                    showHomeScreen();
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.foreground_running)
+                            .setContentTitle("My notification")
+                            .setContentText("Hello World!")
+                            .setContentIntent(pendingIntent);
+            startForeground(1, mBuilder.build());
+
+            timer.scheduleAtFixedRate(new TimerTask() {
+                int iters = 0;
+
+                @Override
+                public void run() {
+                    iters += 1;
+                    Log.d("iters", Integer.toString(iters));
+                    String currentApp = getForegroundApp();
+                    if ("com.android.chrome".equals(currentApp)) {
+                        showHomeScreen();
+                    }
+
+
                 }
+            }, 0, 1000);
+        }
+
+        /*else {
+            Log.d("working?", "yes");
+            final Intent emptyIntent = new Intent();
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.foreground_running)
+                            .setContentTitle("My notification")
+                            .setContentText("Hello World!")
+                            .setContentIntent(pendingIntent);
+            startForeground(1, mBuilder.build());
+            new Timer().scheduleAtFixedRate(new TimerTask() {
+                int iters = 0;
+
+                @Override
+                public void run() {
+                    iters += 1;
+                    Log.d("iters", Integer.toString(iters));
+                    String currentApp = getForegroundApp();
+                    if ("com.android.chrome".equals(currentApp)) {
+                        showHomeScreen();
+                    }
 
 
-            }
-        }, 0, 1000);
+                }
+            }, 0, 1000);
+        }*/
 
         return super.onStartCommand(intent, flags, startId);
 
@@ -104,6 +144,20 @@ public class MyService extends Service {
         this.startActivity(startMain);
         return true;
     }
+
+    @Override
+    public void onDestroy()
+    {
+        // Unregistered or disconnect what you need to
+        // For example: mGoogleApiClient.disconnect();
+
+        // Or break the while loop condition
+        // mDoWhile = false;
+        timer.cancel();
+        timer.purge();
+        super.onDestroy();
+    }
+
 
 
 }

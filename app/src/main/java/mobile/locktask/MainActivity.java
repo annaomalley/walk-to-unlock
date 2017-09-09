@@ -9,8 +9,12 @@ import android.content.Context;
 import android.app.usage.UsageStats;
 import java.util.List;
 import java.util.TreeMap;
+import android.content.pm.ResolveInfo;
 import android.app.ActivityManager;
 import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
+import android.provider.SyncStateContract.Constants;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -20,6 +24,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import android.provider.Settings;
 import android.content.Intent;
+
 import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +47,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 1000);*/
 
+        Button button1 = (Button) findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent startIntent = new Intent(MainActivity.this, MyService.class);
+                startIntent.setAction("START");
+                startService(startIntent);
+            }
+        });
 
+        Button button2 = (Button) findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent stopIntent = new Intent(MainActivity.this, MyService.class);
+                stopIntent.setAction("STOP");
+                startService(stopIntent);
+            }
+        });
+
+
+        getApps();
+    }
+
+    public void getApps() {
+        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> pkgAppsList = this.getPackageManager().queryIntentActivities( mainIntent, 0);
+        Log.d("length",Integer.toString(pkgAppsList.size()));
+        for (ResolveInfo ri : pkgAppsList) {
+            Log.d("ri name",ri.activityInfo.applicationInfo.packageName);
+        }
     }
 
     public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
@@ -58,32 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public String getForegroundApp() {
-        ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
-        String currentApp = tasks.get(0).processName;
-        return currentApp;
-    }
-
-    public String getForegroundApp2() {
-        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-// The first in the list of RunningTasks is always the foreground task.
-        RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-
-        String foregroundTaskPackageName = foregroundTaskInfo .topActivity.getPackageName();
-        PackageManager pm = this.getPackageManager();
-        String foregroundTaskAppName = "none";
-        try {
-            PackageInfo foregroundAppPackageInfo = pm.getPackageInfo(foregroundTaskPackageName, 0);
-            foregroundTaskAppName = foregroundAppPackageInfo.applicationInfo.loadLabel(pm).toString();
-
-        }
-        catch (PackageManager.NameNotFoundException e) {
-
-        }
-
-        return foregroundTaskAppName;
-    }
 
 
 

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TreeMap;
 import java.util.TimerTask;
+import android.widget.Toast;
 import android.app.ActivityManager.RunningTaskInfo;
 
 /**
@@ -36,7 +37,12 @@ public class MyService extends Service {
             public void run() {
                 iters += 1;
                 Log.d("iters",Integer.toString(iters));
-                getForegroundApp();
+                String currentApp = getForegroundApp();
+                if("com.android.chrome".equals(currentApp)){
+                    showHomeScreen();
+                }
+
+
             }
         }, 0, 1000);
 
@@ -61,7 +67,7 @@ public class MyService extends Service {
         return false;
     }*/
 
-    public void getForegroundApp() {
+    public String getForegroundApp() {
         String currentApp = "nah";
         UsageStatsManager usm = (UsageStatsManager)this.getSystemService("usagestats");
         long time = System.currentTimeMillis();
@@ -76,7 +82,16 @@ public class MyService extends Service {
             }
         }
         Log.d("currentApp",currentApp);
-
+        return currentApp;
     }
+
+    public boolean showHomeScreen(){
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        this.startActivity(startMain);
+        return true;
+    }
+
 
 }

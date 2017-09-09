@@ -32,24 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("start","we go");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //startService(new Intent(this, WindowChangeDetectingService.class));
-
-        if (!isServiceRunning(MyService.class,this)) {
-            //startService(new Intent(this, MyService.class));
-        }
-        /*new Timer().scheduleAtFixedRate(new TimerTask() {
-            int iters = 0;
-            @Override
-            public void run() {
-                //String fgName = getForegroundApp();
-                iters += 1;
-                //Log.d("iters",Integer.toString(iters));
-            }
-        }, 0, 1000);*/
 
         Button button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -88,17 +72,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ri name",ri.activityInfo.applicationInfo.packageName);
         }
     }
-
-    public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
 
 
 

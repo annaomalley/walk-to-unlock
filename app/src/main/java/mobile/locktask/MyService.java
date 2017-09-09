@@ -6,9 +6,12 @@ import android.support.annotation.Nullable;
 import android.os.IBinder;
 import android.content.Intent;
 import android.util.Log;
-
+import android.app.usage.UsageStatsManager;
+import android.app.usage.UsageStats;
+import java.util.SortedMap;
 import java.util.List;
 import java.util.Timer;
+import java.util.TreeMap;
 import java.util.TimerTask;
 import android.app.ActivityManager.RunningTaskInfo;
 
@@ -33,9 +36,7 @@ public class MyService extends Service {
             public void run() {
                 iters += 1;
                 Log.d("iters",Integer.toString(iters));
-                String foregroundAppName = getForegroundApp();
-                Log.d("foregroundAppName",foregroundAppName);
-
+                getForegroundApp();
             }
         }, 0, 1000);
 
@@ -43,18 +44,39 @@ public class MyService extends Service {
 
     }
 
-    public String getForegroundApp() {
-        //ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-        //List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
-        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-// The first in the list of RunningTasks is always the foreground task.
-        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-
-        for (ActivityManager.RunningTaskInfo task:tasks) {
-            Log.d("taskName",task);
+    /*public static boolean isAppRunning(final Context context, final String packageName) {
+        final ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningAppProcessInfo> procInfos = activityManager.getRunningAppProcesses();
+        if (procInfos != null)
+        {
+            for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
+                if (processInfo.processName.equals(packageName)) {
+                    return true;
+                }
+                else {
+                    Log.d("processName",processInfo.processName);
+                }
+            }
         }
-        String currentApp = tasks.get(tasks.size() - 1).processName;
-        return currentApp;
+        return false;
+    }*/
+
+    public void getForegroundApp() {
+        String currentApp = "nah";
+        UsageStatsManager usm = (UsageStatsManager)this.getSystemService("usagestats");
+        long time = System.currentTimeMillis();
+        List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY,  time - 1000*1000, time);
+        if (appList != null && appList.size() > 0) {
+            SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+            for (UsageStats usageStats : appList) {
+                mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+            }
+            if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+            }
+        }
+        Log.d("currentApp",currentApp);
+
     }
 
 }

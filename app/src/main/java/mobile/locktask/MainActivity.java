@@ -7,6 +7,8 @@ import android.view.WindowManager;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.app.usage.UsageStats;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import android.content.pm.ResolveInfo;
@@ -67,19 +69,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button button3 = (Button) findViewById(R.id.button3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("pressed", "yes");
+                Intent myIntent = new Intent(MainActivity.this, AppListActivity.class);
+                MainActivity.this.startActivity(myIntent);
+            }
+        });
 
-        getApps();
     }
 
-    public void getApps() {
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        List<ResolveInfo> pkgAppsList = this.getPackageManager().queryIntentActivities( mainIntent, 0);
-        Log.d("length",Integer.toString(pkgAppsList.size()));
-        for (ResolveInfo ri : pkgAppsList) {
-            Log.d("ri name",ri.activityInfo.applicationInfo.packageName);
-        }
-    }
+
 
     public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);

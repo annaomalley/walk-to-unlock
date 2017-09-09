@@ -17,6 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.app.PendingIntent;
 import android.widget.Toast;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.os.Build;
 
 /**
  * Created by Anna on 9/8/17.
@@ -58,6 +59,7 @@ public class MyService extends Service {
                 @Override
                 public void run() {
                     iters += 1;
+                    trythis();
                     Log.d("iters", Integer.toString(iters));
                     String currentApp = getForegroundApp();
                     if ("com.android.chrome".equals(currentApp)) {
@@ -99,6 +101,26 @@ public class MyService extends Service {
         }*/
 
         return super.onStartCommand(intent, flags, startId);
+
+    }
+
+    public void trythis() {
+        String topPackageName = "tralse";
+            UsageStatsManager mUsageStatsManager = (UsageStatsManager)getSystemService("usagestats");
+            long time = System.currentTimeMillis();
+            // We get usage stats for the last 10 seconds
+            List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000*10, time);
+            // Sort the stats by the last time used
+            if(stats != null) {
+                SortedMap<Long,UsageStats> mySortedMap = new TreeMap<Long,UsageStats>();
+                for (UsageStats usageStats : stats) {
+                    mySortedMap.put(usageStats.getLastTimeUsed(),usageStats);
+                }
+                if(!mySortedMap.isEmpty()) {
+                    topPackageName =  mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+            }
+        }
+        Log.d("top package name",topPackageName);
 
     }
 

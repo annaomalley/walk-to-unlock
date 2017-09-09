@@ -32,8 +32,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("start","we go");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, WindowChangeDetectingService.class));
 
         if (!isServiceRunning(MyService.class,this)) {
             startService(new Intent(this, MyService.class));

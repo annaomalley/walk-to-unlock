@@ -9,6 +9,7 @@ import android.util.Log;
 import android.app.usage.UsageStatsManager;
 import android.app.usage.UsageStats;
 import java.util.SortedMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TreeMap;
@@ -53,6 +54,9 @@ public class MyService extends Service {
                             .setContentIntent(pendingIntent);
             startForeground(1, mBuilder.build());
 
+
+            final ArrayList<String> forbiddenApps = intent.getStringArrayListExtra("forbiddenApps");
+
             timer.scheduleAtFixedRate(new TimerTask() {
                 int iters = 0;
 
@@ -62,8 +66,10 @@ public class MyService extends Service {
                     trythis();
                     Log.d("iters", Integer.toString(iters));
                     String currentApp = getForegroundApp();
-                    if ("com.android.chrome".equals(currentApp)) {
-                        showHomeScreen();
+                    for (String forbiddenApp : forbiddenApps) {
+                        if (forbiddenApp.equals(currentApp)) {
+                            showHomeScreen();
+                        }
                     }
 
 
@@ -71,34 +77,6 @@ public class MyService extends Service {
             }, 0, 1000);
         }
 
-        /*else {
-            Log.d("working?", "yes");
-            final Intent emptyIntent = new Intent();
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.foreground_running)
-                            .setContentTitle("My notification")
-                            .setContentText("Hello World!")
-                            .setContentIntent(pendingIntent);
-            startForeground(1, mBuilder.build());
-            new Timer().scheduleAtFixedRate(new TimerTask() {
-                int iters = 0;
-
-                @Override
-                public void run() {
-                    iters += 1;
-                    Log.d("iters", Integer.toString(iters));
-                    String currentApp = getForegroundApp();
-                    if ("com.android.chrome".equals(currentApp)) {
-                        showHomeScreen();
-                    }
-
-
-                }
-            }, 0, 1000);
-        }*/
 
         return super.onStartCommand(intent, flags, startId);
 

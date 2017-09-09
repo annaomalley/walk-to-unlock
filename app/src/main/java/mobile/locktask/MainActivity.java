@@ -18,6 +18,7 @@ import android.provider.SyncStateContract.Constants;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import java.util.ArrayList;
 import android.util.Log;
 import java.util.logging.Handler;
 import java.util.Timer;
@@ -51,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<String> forbiddenApps = new ArrayList<String>();
+                forbiddenApps.add("com.android.chrome");
+                forbiddenApps.add("com.google.android.apps.messaging");
                 Intent startIntent = new Intent(MainActivity.this, MyService.class);
+                startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");
                 startService(startIntent);
             }

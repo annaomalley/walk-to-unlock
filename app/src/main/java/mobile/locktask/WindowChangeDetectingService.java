@@ -55,10 +55,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                 Log.d("Access event", "access event");
                 if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
                     if (event.getPackageName() != null && event.getClassName() != null) {
-                        ComponentName componentName = new ComponentName(
-                                event.getPackageName().toString(),
-                                event.getClassName().toString()
-                        );
                         Log.i("CurrentActivity", event.getPackageName().toString());
                         if ("com.android.chrome".equals(event.getPackageName().toString())) {
                             showHomeScreen();

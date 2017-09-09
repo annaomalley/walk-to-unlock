@@ -20,6 +20,7 @@ import android.provider.SyncStateContract.Constants;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import java.util.ArrayList;
 import android.util.Log;
 import java.util.logging.Handler;
 import java.util.Timer;
@@ -36,24 +37,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!isServiceRunning(MyService.class,this)) {
-            startService(new Intent(this, MyService.class));
-        }
-        /*new Timer().scheduleAtFixedRate(new TimerTask() {
-            int iters = 0;
-            @Override
-            public void run() {
-                //String fgName = getForegroundApp();
-                iters += 1;
-                //Log.d("iters",Integer.toString(iters));
-            }
-        }, 0, 1000);*/
-
         Button button1 = (Button) findViewById(R.id.button1);
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent startIntent = new Intent(MainActivity.this, MyService.class);
+                ArrayList<String> forbiddenApps = new ArrayList<String>();
+                forbiddenApps.add("com.android.chrome");
+                forbiddenApps.add("com.google.android.apps.messaging");
+                Intent startIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
+                startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");
                 startService(startIntent);
             }
@@ -63,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent stopIntent = new Intent(MainActivity.this, MyService.class);
+                Intent stopIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
                 stopIntent.setAction("STOP");
                 startService(stopIntent);
             }
@@ -81,17 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-    public static boolean isServiceRunning(Class<?> serviceClass, Context context) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 
 

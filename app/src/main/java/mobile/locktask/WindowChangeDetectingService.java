@@ -27,30 +27,14 @@ public class WindowChangeDetectingService extends AccessibilityService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.foreground_running)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!")
+                        .setContentTitle("LockTask is blocking your apps")
+                        .setContentText("Work out to unlock")
                         .setContentIntent(pendingIntent);
         startForeground(1, mBuilder.build());
         return super.onStartCommand(intent, flags, startId);
 
     }
 
-        @Override
-        protected void onServiceConnected() {
-            Log.d("service connected","Yes");
-            super.onServiceConnected();
-
-            //Configure these here for compatibility with API 13 and below.
-            AccessibilityServiceInfo config = new AccessibilityServiceInfo();
-            config.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
-            config.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-
-            if (Build.VERSION.SDK_INT >= 16)
-                //Just in case this helps
-                config.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
-
-            setServiceInfo(config);
-        }
 
         @Override
         public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -67,22 +51,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
                     }
 
 
-                    ActivityInfo activityInfo = tryGetActivity(componentName);
-                    boolean isActivity = activityInfo != null;
-                    if (isActivity)
-                        Log.i("CurrentActivity", componentName.flattenToShortString());
-                    else {
-                        Log.d("UGH","not working");
-                    }
                 }
-            }
-        }
-
-        private ActivityInfo tryGetActivity(ComponentName componentName) {
-            try {
-                return getPackageManager().getActivityInfo(componentName, 0);
-            } catch (PackageManager.NameNotFoundException e) {
-                return null;
             }
         }
 

@@ -44,20 +44,12 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> forbiddenApps = new ArrayList<String>();
                 forbiddenApps.add("com.android.chrome");
                 forbiddenApps.add("com.google.android.apps.messaging");
+
                 Intent startIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
                 startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");
                 startService(startIntent);
-            }
-        });
-
-        Button button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent stopIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
-                stopIntent.setAction("STOP");
-                startService(stopIntent);
+                finish();
             }
         });
 
@@ -67,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, AppListActivity.class);
                 MainActivity.this.startActivity(myIntent);
+                finish();
             }
         });
 

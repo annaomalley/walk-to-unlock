@@ -52,16 +52,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent stopIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
-                stopIntent.setAction("STOP");
-                startService(stopIntent);
-            }
-        });
-
         Button button3 = (Button) findViewById(R.id.button3);
         button3.setOnClickListener(new View.OnClickListener() {
             @Override

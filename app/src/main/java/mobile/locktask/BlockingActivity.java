@@ -30,6 +30,11 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
 
+        if (mJumpCounter != 0) {
+            TextView instructions_tv = (TextView) findViewById(R.id.instructions);
+            instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+        }
+
     }
 
     @Override
@@ -69,6 +74,18 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
             startService(stopIntent);
         }
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if (mJumpCounter != 0) {
+            TextView instructions_tv = (TextView) findViewById(R.id.instructions);
+            instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+        }
+
+    }
+
 
 
 

@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 /**
  * Created by Anna on 9/9/17.
@@ -37,7 +38,7 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.d("SensorChanged","sensor_chenged");
+        //Log.d("SensorChanged","sensor_chenged");
         detectJump(event.values[0], event.timestamp);
     }
 
@@ -59,7 +60,10 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
         mJumpCounter++;
         Log.d("ONEJUMP",Integer.toString(mJumpCounter));
 
-        if (mJumpCounter >= 5) {
+        TextView instructions_tv = (TextView) findViewById(R.id.instructions);
+        instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+
+        if (mJumpCounter >= 15) {
             Intent stopIntent = new Intent(BlockingActivity.this, WindowChangeDetectingService.class);
             stopIntent.setAction("STOP");
             startService(stopIntent);

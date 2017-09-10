@@ -4,7 +4,8 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text = "hello world"
+        android:text = "Do 15 jumping jacks to unlock"
+        android:id = "@+id/instructions"
         android:layout_height = "wrap_content"
         android:layout_width = "wrap_content"
         ></TextView>

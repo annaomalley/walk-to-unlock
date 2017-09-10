@@ -60,6 +60,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
         @Override
         public void onAccessibilityEvent(AccessibilityEvent event) {
+            Log.d("Access event", "access event");
             if (blockingOn) {
                 Log.d("Access event", "access event");
                 if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {

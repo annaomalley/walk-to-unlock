@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> forbiddenApps = new ArrayList<String>();
                 forbiddenApps.add("com.android.chrome");
                 forbiddenApps.add("com.google.android.apps.messaging");
+
                 Intent startIntent = new Intent(MainActivity.this, WindowChangeDetectingService.class);
                 startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");

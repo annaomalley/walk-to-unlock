@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 startIntent.putStringArrayListExtra("forbiddenApps", forbiddenApps);
                 startIntent.setAction("START");
                 startService(startIntent);
+                finish();
             }
         });
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("pressed", "yes");
                 Intent myIntent = new Intent(MainActivity.this, AppListActivity.class);
                 MainActivity.this.startActivity(myIntent);
+                finish();
             }
         });
 

@@ -19,20 +19,23 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
     private long mLastTime = 0;
     private static final long TIME_THRESHOLD_NS = 2000000000; // in nanoseconds (= 2sec)
     private boolean mUp = false;
-    private int mJumpCounter = 0;
+    private int mJumpCounter;
+    private boolean blockingOn = false;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.blocking);
         Log.d("Create","cre8");
+        mJumpCounter = 0;
+        blockingOn = true;
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this,sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
 
         if (mJumpCounter != 0) {
             TextView instructions_tv = (TextView) findViewById(R.id.instructions);
-            instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+            instructions_tv.setText(Integer.toString(15-mJumpCounter));
         }
 
     }
@@ -44,7 +47,9 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
     @Override
     public void onSensorChanged(SensorEvent event) {
         //Log.d("SensorChanged","sensor_chenged");
-        detectJump(event.values[0], event.timestamp);
+        if (blockingOn) {
+            detectJump(event.values[0], event.timestamp);
+        }
     }
 
     private void detectJump(float xValue, long timestamp) {
@@ -66,12 +71,14 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
         Log.d("ONEJUMP",Integer.toString(mJumpCounter));
 
         TextView instructions_tv = (TextView) findViewById(R.id.instructions);
-        instructions_tv.setText(15-mJumpCounter);
+        instructions_tv.setText(Integer.toString(15-mJumpCounter));
 
         if (mJumpCounter >= 15) {
             Intent stopIntent = new Intent(BlockingActivity.this, WindowChangeDetectingService.class);
             stopIntent.setAction("STOP");
             startService(stopIntent);
+            blockingOn = false;
+            finish();
         }
     }
 
@@ -81,7 +88,7 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
 
         if (mJumpCounter != 0) {
             TextView instructions_tv = (TextView) findViewById(R.id.instructions);
-            instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+            instructions_tv.setText(Integer.toString(15-mJumpCounter));
         }
 
     }

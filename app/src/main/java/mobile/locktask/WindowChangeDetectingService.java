@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.ActivityInfo;
 import android.util.Log;
+import android.os.Handler;
 
 /**
  * Created by Anna on 9/9/17.
@@ -23,8 +24,10 @@ public class WindowChangeDetectingService extends AccessibilityService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+
+
         if(intent.getAction() != null && intent.getAction().equals("STOP")) {
-            blockingOn = false;
+            blockingOff();
         }
 
         else if (!blockingOn) {
@@ -42,6 +45,20 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             .setContentText("Work out to unlock")
                             .setContentIntent(pendingIntent);
             startForeground(1, mBuilder.build());
+
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    blockingOff();
+                }
+            }, 20 * 1000);
+
+            Intent dialogIntent = new Intent(this, BlockingActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(dialogIntent);
+
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -69,6 +86,13 @@ public class WindowChangeDetectingService extends AccessibilityService {
         @Override
         public void onInterrupt() {
         }
+
+    private void blockingOff() {
+        blockingOn = false;
+        Intent dialogIntent = new Intent(this, MainActivity.class);
+        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(dialogIntent);
+    }
 
     public boolean showHomeScreen(){
         Intent startMain = new Intent(Intent.ACTION_MAIN);

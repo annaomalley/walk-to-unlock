@@ -26,7 +26,7 @@ public class WindowChangeDetectingService extends AccessibilityService {
 
 
 
-        if(intent.getAction() != null && intent.getAction().equals("STOP")) {
+        if(intent.getAction() != null && intent.getAction().equals("STOP") && blockingOn) {
             blockingOff();
         }
 
@@ -46,14 +46,6 @@ public class WindowChangeDetectingService extends AccessibilityService {
                             .setContentIntent(pendingIntent);
             startForeground(1, mBuilder.build());
 
-
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    blockingOff();
-                }
-            }, 20 * 1000);
 
             Intent dialogIntent = new Intent(this, BlockingActivity.class);
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

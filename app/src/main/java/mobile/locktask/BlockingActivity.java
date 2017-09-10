@@ -66,7 +66,7 @@ public class BlockingActivity extends AppCompatActivity implements SensorEventLi
         Log.d("ONEJUMP",Integer.toString(mJumpCounter));
 
         TextView instructions_tv = (TextView) findViewById(R.id.instructions);
-        instructions_tv.setText(15-mJumpCounter + " jumping jacks left to unlock");
+        instructions_tv.setText(15-mJumpCounter);
 
         if (mJumpCounter >= 15) {
             Intent stopIntent = new Intent(BlockingActivity.this, WindowChangeDetectingService.class);
